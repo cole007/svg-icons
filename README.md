@@ -37,11 +37,11 @@ Create a field using the `SVG Icons` field type and choose which icon set you wo
 SVG Icons comes with its own `config.php` which you can over ride by simply creating a `svgicons.php` in your Craft `config` directory.
 
 ### iconSetsPath [string]
-*Default `$_SERVER['DOCUMENT_ROOT'] . '/svgicons/'`*
+***Default `$_SERVER['DOCUMENT_ROOT'] . '/svgicons/'`***
 File system path to the folder where you want to store your icon sets.
 
 ### iconSetsUrl [string]
-*Default `'/svgicons/'`*
+***Default `'/svgicons/'`***
 The `iconSetsUrl` will be prepended to the path and filename of the icon.
 
 ## Using SVG Icons
@@ -50,21 +50,21 @@ The `iconSetsUrl` will be prepended to the path and filename of the icon.
 
 Public attributes and methods of the `SvgIconsModel` model.
 
-**`{{ svgIcon }}` [string]**
+**`{{ svgIcon }}` *[string]***
 
 Returns icon public url
 
 #### Attributes
 
-`icon` *[string]*
+**`icon` *[string]***
 
 The icon set path including icon file name
 
-`width` *[number]*
+**`width` *[number]***
 
 The icon original width
 
-`height` *[number]*
+**`height` *[number]***
 
 The icon original height
 
@@ -72,25 +72,25 @@ The icon original height
 
 ##### getInline
 
-**`{{ svgIcon.inline }}` [string]**
+**`{{ svgIcon.inline }}` *[string]***
 
 Returns inlines icon
 
 ##### getUrl
 
-**`{{ svgIcon.url }}` [string]**
+**`{{ svgIcon.url }}` *[string]***
 
 Returns icon public URL
 
 ##### getDimensions
 
-**`{{ svgIcon.dimensions }}` [array]**
+**`{{ svgIcon.dimensions }}` *[array]***
 
 Returns icon dimensions as array
 
 ##### setDimensions
 
-**`{{ svgIcon.setDimensions(newHeight) }}` [array]**
+**`{{ svgIcon.setDimensions(newHeight) }}` *[array]***
 
 Returns icon new dimensions in pixels as array maintaining aspect ratio
 
@@ -98,19 +98,19 @@ Returns icon new dimensions in pixels as array maintaining aspect ratio
 
 #### Inline SVG Icon
 
-**`{{ craft.svgIcons.inline(icon) }}` [string]**
+**`{{ craft.svgIcons.inline(icon) }}` *[string]***
 
 Returns icon public URL
 
 #### Get SVG Icon Dimensions
 
-**`{{ craft.svgIcons.getDimensions(icon) }}` [array]**
+**`{{ craft.svgIcons.getDimensions(icon) }}` *[array]***
 
 Returns icon dimensions as array
 
 #### Set SVG Icon Dimensions
 
-**`{{ craft.svgIcons.setDimensions(icon, newHeight) }}` [array]**
+**`{{ craft.svgIcons.setDimensions(icon, newHeight) }}` *[array]***
 
 Returns icon new dimensions in pixels as array maintaining aspect ratio
 
