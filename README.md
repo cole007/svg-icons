@@ -18,7 +18,7 @@ SVG Icons works on Craft 2.6.x.
 
 ## SVG Icons Overview
 
-The SVG Icons plugin allows you to quickly and easily access any set of SVG icons stored within your sites public directory (Shh, they don't just have to be icons).
+The SVG Icons plugin introduces a custom fieldtype allowing you to quickly and easily access any set of SVG icons stored within your sites public directory without giving your clients the ability to delete or upload.
 
 ![Screenshot](resources/screenshots/svg-icon-fieldtype.png)
 
@@ -137,6 +137,12 @@ Example `{{ craft.svgIcons.setDimensions('fontawesome/align-left.svg', 24) }}`
 Some things to do, and ideas for potential features:
 
 * Release it
+
+## Bugs and Suggestions
+
+If you stumble across any bugs let me know, or better yet submit a pull request!
+
+I'm open to feed back and suggestions as I'm sure there is plenty of room for improvement.
 
 ## SVG Icons Changelog
 
