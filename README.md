@@ -26,11 +26,15 @@ To get started, simply create a directory called `svgicons` in your `public` dir
 
 Create a field using the `SVG Icons` field type and choose which icon set you would like to use.
 
+---
+
+**ENSURE SVG DOES NOT CONTAIN WIDTH & HEIGHT ATTRIBUTES IF YOU WOULD LIKE TO SCALE ICON WITH CSS**
+
+---
+
 ## Configuring SVG Icons
 
 SVG Icons comes with its own `config.php` which you can over ride by simply creating a `svgicons.php` in your Craft `config` directory.
-
-**ENSURE SVG DOES NOT CONTAIN WIDTH & HEIGHT ATTRIBUTES IF YOU WOULD LIKE TO SCALE ICON WITH CSS**
 
 ### iconSetsPath [string]
 *Default `$_SERVER['DOCUMENT_ROOT'] . '/svgicons/'`*
