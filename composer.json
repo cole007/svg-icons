@@ -1,0 +1,14 @@
+{
+	"name": "fyrebase/svgicons",
+	"description": "Easily access urls or inline SVG icons from a public directory",
+	"type": "craft-plugin",
+	"authors": [
+		{
+			"name": "Fyrebase",
+			"homepage": "fyrebase.com"
+		}
+	],
+	"require": {
+		"composer/installers": "~1.0"
+	}
+}
