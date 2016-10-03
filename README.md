@@ -80,11 +80,15 @@ The icon original height
 
 Returns inlines icon
 
+Example `{{ svgIcon }}`
+
 ##### getUrl
 
 **`{{ svgIcon.url }}` [string]**
 
 Returns icon public URL
+
+Example `{{ svgIcon.url }}`
 
 ##### getDimensions
 
@@ -92,31 +96,41 @@ Returns icon public URL
 
 Returns icon dimensions as array
 
+Example `{{ svgIcon.dimensions }}`
+
 ##### setDimensions
 
 **`{{ svgIcon.setDimensions(newHeight) }}` [array]**
 
 Returns icon new dimensions in pixels as array maintaining aspect ratio
 
+Example `{{ svgIcon.setDimensions(24) }}`
+
 ### Template Variables
 
 #### Inline SVG Icon
 
-**`{{ craft.svgIcons.inline(icon) }}` [string]**
+**`{{ craft.svgIcons.inline(path) }}` [string]**
 
 Returns icon public URL
 
+Example `{{ craft.svgIcons.inline('fontawesome/align-left.svg') }}`
+
 #### Get SVG Icon Dimensions
 
-**`{{ craft.svgIcons.getDimensions(icon) }}` [array]**
+**`{{ craft.svgIcons.getDimensions(path) }}` [array]**
 
 Returns icon dimensions as array
 
+Example `{{ craft.svgIcons.getDimensions('fontawesome/align-left.svg') }}`
+
 #### Set SVG Icon Dimensions
 
-**`{{ craft.svgIcons.setDimensions(icon, newHeight) }}` [array]**
+**`{{ craft.svgIcons.setDimensions(path, newHeight) }}` [array]**
 
 Returns icon new dimensions in pixels as array maintaining aspect ratio
+
+Example `{{ craft.svgIcons.setDimensions('fontawesome/align-left.svg', 24) }}`
 
 ## SVG Icons Roadmap
 
