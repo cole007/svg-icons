@@ -173,6 +173,10 @@ I'm open to feed back and suggestions as I'm sure there is plenty of room for im
 
 ## SVG Icons Changelog
 
+### 0.0.3 --
+
+* **[Added]** `getFilename` service, model and variable methods
+
 ### 0.0.2 -- 2016.10.05
 
 * **[Added]** Obtain icon model from string using new template variable `getModel`
