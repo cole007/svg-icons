@@ -92,6 +92,14 @@ Returns icon public URL
 
 Example `{{ svgIcon.url }}`
 
+##### getFilename
+
+**`{{ svgIcon.filename }}` [string]**
+
+Returns icon filename without extension
+
+Example `{{ svgIcon.filename }}`
+
 ##### getDimensions
 
 **`{{ svgIcon.dimensions }}` [array]**
@@ -126,6 +134,14 @@ Returns icon public URL
 
 Example `{{ craft.svgIcons.inline('fontawesome/align-left.svg') }}`
 
+#### Get SVG Icon Filename
+
+**`{{ craft.svgIcons.getFilename(path) }}` [string]**
+
+Returns icon filename without extension
+
+Example `{{ craft.svgIcons.getFilename('fontawesome/align-left.svg') }}`
+
 #### Get SVG Icon Dimensions
 
 **`{{ craft.svgIcons.getDimensions(path) }}` [array]**
@@ -146,7 +162,8 @@ Example `{{ craft.svgIcons.setDimensions('fontawesome/align-left.svg', 24) }}`
 
 Some things to do, and ideas for potential features:
 
-* Release it
+* Ability to use SVG sprites
+* Get rid of the initial none icon allowing user to search straight away
 
 ## Bugs and Suggestions
 

@@ -67,6 +67,15 @@ class SvgIconsModel extends BaseModel
 	}
 
 	/**
+	 * Return icon filename
+	 * @return string
+	 */
+	public function getFilename()
+	{
+		return craft()->svgIcons->getFilename($this->icon);
+	}
+
+	/**
 	 * Return inline icon
 	 * @return string
 	 */

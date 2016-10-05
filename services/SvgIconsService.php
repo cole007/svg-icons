@@ -104,6 +104,18 @@ class SvgIconsService extends BaseApplicationComponent
 	}
 
 	/**
+	 * Return icon file name
+	 * @param  string $icon
+	 * @return string
+	 */
+	public function getFilename($icon)
+	{
+		$pi = pathinfo(craft()->config->get('iconSetsUrl', 'svgicons') . $icon);
+
+		return $pi['filename'];
+	}
+
+	/**
 	 * Return icon set select options
 	 * @param  string $folder
 	 * @return array

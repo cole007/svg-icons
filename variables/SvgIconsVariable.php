@@ -36,4 +36,9 @@ class SvgIconsVariable
 	{
 		return craft()->svgIcons->getModel($icon);
 	}
+
+	public function getFilename($icon)
+	{
+		return craft()->svgIcons->getFilename($icon);
+	}
 }
