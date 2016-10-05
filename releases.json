@@ -13,7 +13,7 @@
         "date": "2016-10-05T11:00:00-11:00",
         "notes": [
             "[Added] Obtain icon model from string using new template variable getModel",
-						"[Added] Renamed getIconFromString service method to getModel and fixed pathing issue"
+						"[Added] Renamed getIconFromString service method to getModel and fixed pathing issue",
             "[Improved] Updated README.md"
         ]
     }
