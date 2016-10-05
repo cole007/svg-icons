@@ -53,10 +53,6 @@ The `iconSetsUrl` will be prepended to the path and filename of the icon.
 
 Public attributes and methods of the `SvgIconsModel` model.
 
-**`{{ svgIcon }}` [string]**
-
-Returns icon public url
-
 #### Attributes
 
 **`icon` [string]**
@@ -72,6 +68,13 @@ The icon original width
 The icon original height
 
 #### Methods
+
+#### \__toString
+
+**`{{ svgIcon }}` [string]**
+
+Returns icon public url
+
 
 ##### getInline
 
@@ -106,6 +109,14 @@ Returns icon new dimensions in pixels as array maintaining aspect ratio
 Example `{{ svgIcon.setDimensions(24) }}`
 
 ### Template Variables
+
+#### Get SVG Icon Model From String
+
+**`{{ craft.svgIcons.getModel(path) }}` [model]**
+
+Returns icon data as array
+
+Example `{{ craft.svgIcons.getModel('fontawesome/align-left.svg') }}`
 
 #### Inline SVG Icon
 

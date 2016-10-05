@@ -42,23 +42,20 @@ class SvgIconsService extends BaseApplicationComponent
 	}
 
 	/**
-	 * Return icon array from string
+	 * Return icon model from string
 	 * @param  string $icon
 	 * @return array
 	 */
-	public function getIconFromString($icon)
+	public function getModel($icon)
 	{
 		if (!IoHelper::fileExists(craft()->config->get('iconSetsPath', 'svgicons') . $icon)) return false;
 
-		$iconPath = craft()->config->get('iconSetsUrl', 'svgicons') . $icon;
+		$model = new SvgIconsModel($icon);
 
-		list($width, $height) = $this->getDimensions($icon);
+		$model->icon = $icon;
+		list($model->width, $model->height) = $this->getDimensions($icon);
 
-		return array(
-			'icon' => $iconPath,
-			'width' => $width,
-			'height' => $height,
-		);
+		return $model;
 	}
 
 	/**
