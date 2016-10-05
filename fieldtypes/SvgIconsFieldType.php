@@ -167,8 +167,6 @@ class SvgIconsFieldType extends BaseFieldType
 	{
 		if(!$value) return null;
 
-		d($value);
-
 		$value = new SvgIconsModel($value);
 
 		list($value['width'], $value['height']) = craft()->svgIcons->getDimensions($value['icon']);

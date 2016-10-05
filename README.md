@@ -158,6 +158,12 @@ I'm open to feed back and suggestions as I'm sure there is plenty of room for im
 
 ### 0.0.1 -- 2016.09.13
 
+* **[Added]** Obtain icon model from string using new template variable `getModel`
+* **[Added]** Renamed `getIconFromString` service method to `getModel` and fixed pathing issue
+* **[Improved]** Updated README.md
+
+### 0.0.1 -- 2016.09.13
+
 * Initial release
 
 Brought to you by [Fyrebase](http://fyrebase.com)
