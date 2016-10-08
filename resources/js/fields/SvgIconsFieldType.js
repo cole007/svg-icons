@@ -25,10 +25,18 @@
 				dropdownParent: 'body',
 				render: {
 					item: function(item, escape) {
-						return '<div class="svgicons__si"><div class="svgicons__si__i"><img src="' + (item.value == '_blank_' ? options.blank : options.iconSetUrl + item.value) + '" alt="" /></div><span>' + escape(item.text) + '</span></div>';
+						if (item.value.indexOf('svgicons-') == 0) {
+							return '<div class="svgicons__si"><div class="svgicons__si__i ' + item.value + '"></div><span>' + escape(item.text) + '</span></div>';
+						} else {
+							return '<div class="svgicons__si"><div class="svgicons__si__i"><img src="' + (item.value == '_blank_' ? options.blank : options.iconSetUrl + item.value) + '" alt="" /></div><span>' + escape(item.text) + '</span></div>';
+						}
 					},
 					option: function(item, escape) {
-						return '<div class="svgicons__i"><div class="svgicons__i__w"><div class="svgicons__i__w__i"><img src="' + (item.value == '_blank_' ? options.blank : options.iconSetUrl + item.value) + '" alt="" /></div></div><span>' + escape(item.text) + '</span></div>';
+						if (item.value.indexOf('svgicons-') == 0) {
+							return '<div class="svgicons__i"><div class="svgicons__i__w"><div class="svgicons__i__w__i ' + item.value + '"></div></div><span>' + escape(item.text) + '</span></div>';
+						} else {
+							return '<div class="svgicons__i"><div class="svgicons__i__w"><div class="svgicons__i__w__i"><img src="' + (item.value == '_blank_' ? options.blank : options.iconSetUrl + item.value) + '" alt="" /></div></div><span>' + escape(item.text) + '</span></div>';
+						}
 					}
 				}
 			}

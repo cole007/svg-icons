@@ -69,6 +69,12 @@ class SvgIconsFieldType extends BaseFieldType
 				foreach ($folders as $idx => $f)
 				{
 					$iconSets[IOHelper::getFolderName($f) . IOHelper::getFolderName($f, false)] = IOHelper::getFolderName($f, false);
+
+					// Create sprite sheet resources
+					foreach (IOHelper::getFolderContents($f, false, '\.svg.css') as $stylesheet) {
+						craft()->templates->includeCss(IOHelper::getFileContents($stylesheet));
+						craft()->svgIcons->getSprites($stylesheet);
+					}
 				}
 			}
 			if (empty($iconSets)) {
@@ -118,6 +124,10 @@ class SvgIconsFieldType extends BaseFieldType
 		craft()->templates->includeCssResource('svgicons/css/fields/SvgIconsFieldType.css');
 		craft()->templates->includeJsResource('svgicons/js/fields/SvgIconsFieldType.js');
 
+		foreach (IOHelper::getFolderContents(craft()->path->getPluginsPath() . 'svgicons/resources/sprites', false, '\.svg.css$') as $sheet) {
+			craft()->templates->includeCssResource('svgicons/sprites/' . IOHelper::getFilename($sheet));
+		}
+
 		$jsonVars = array(
 			'id' => $id,
 			'inputId' => craft()->templates->namespaceInputId($id),
@@ -153,6 +163,11 @@ class SvgIconsFieldType extends BaseFieldType
 	{
 		if ($value['icon'] == '_blank_') $value = null;
 
+		if (substr($value['icon'], 0, strlen('svgicons-')) === 'svgicons-') {
+			$value['sprite'] = str_replace('svgicons-', '', $value['icon']);
+			$value['icon'] = null;
+		}
+
 		return $value;
 	}
 
@@ -168,6 +183,10 @@ class SvgIconsFieldType extends BaseFieldType
 		if(!$value) return null;
 
 		$value = new SvgIconsModel($value);
+
+		if ($value->sprite) {
+			$value->icon = 'svgicons-' . $value->sprite;
+		}
 
 		list($value['width'], $value['height']) = craft()->svgIcons->getDimensions($value['icon']);
 

@@ -19,7 +19,7 @@ class SvgIconsVariable
 {
 	public function getDimensions($str)
 	{
-		return craft()->svgIcons->getIconDimensions($str);
+		return craft()->svgIcons->getDimensions($str);
 	}
 
 	public function setDimensions($str, $baseHeight)

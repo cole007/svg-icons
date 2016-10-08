@@ -63,3 +63,11 @@
 .svgicons__select .selectize-dropdown-content {
   max-height: 380px;
 }
+[data-value^=svgicons-] .svgicons__si__i {
+  height: 24px !important;
+  width: 24px !important;
+}
+[data-value^=svgicons-] .svgicons__i__w__i {
+  height: 32px !important;
+  width: 32px !important;
+}

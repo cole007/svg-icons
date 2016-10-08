@@ -17,6 +17,17 @@ namespace Craft;
 
 class SvgIconsService extends BaseApplicationComponent
 {
+	private $sprites = array();
+
+	public function init()
+	{
+		foreach (IOHelper::getFolderContents(craft()->path->getPluginsPath() . 'svgicons/resources/sprites', false, '\.json$') as $json) {
+			$this->sprites = array_merge(JsonHelper::decode(IOHelper::getFileContents($json)), $this->sprites);
+		}
+
+		parent::init();
+	}
+
 	/**
 	 * Return icon sets select options
 	 * @param  mixed $iconSets
@@ -28,13 +39,11 @@ class SvgIconsService extends BaseApplicationComponent
 
 		if ($iconSets == '*') {
 			foreach (IOHelper::getFolders(craft()->config->get('iconSetsPath', 'svgicons')) as $folder) {
-				$icons[] = array('optgroup' => IOHelper::getFolderName($folder, false));
-				$icons = array_merge($icons, $this->_getIcons($folder));
+				$icons = array_merge($icons, $this->_getOptions($folder));
 			}
 		} else {
 			foreach ($iconSets as $folder) {
-				$icons[] = array('optgroup' => IOHelper::getFolderName($folder, false));
-				$icons = array_merge($icons, $this->_getIcons($folder));
+				$icons = array_merge($icons, $this->_getOptions($folder));
 			}
 		}
 
@@ -65,7 +74,12 @@ class SvgIconsService extends BaseApplicationComponent
 	 */
 	public function getDimensions($icon)
 	{
-		return ImageHelper::getImageSize(craft()->config->get('iconSetsPath', 'svgicons') . $icon);
+		if (isset($this->sprites[$icon]) || substr($icon, 0, strlen('svgicons-')) === 'svgicons-') {
+			$icon = str_replace('svgicons-', '', $icon);
+			return array_values($this->sprites[$icon]);
+		}
+
+		return IOHelper::getFile(craft()->config->get('iconSetsPath', 'svgicons') . $icon) ? ImageHelper::getImageSize(craft()->config->get('iconSetsPath', 'svgicons') . $icon) : array(0,0);
 	}
 
 	/**
@@ -79,7 +93,12 @@ class SvgIconsService extends BaseApplicationComponent
 			$w = $icon->width;
 			$h = $icon->height;
 		} else {
-			list($w, $h) = ImageHelper::getImageSize(craft()->config->get('iconSetsPath', 'svgicons') . $icon);
+			if (substr($icon, 0, strlen('svgicons-')) === 'svgicons-') {
+				$sprite = str_replace('svgicons-', '', $icon);
+				list($w, $h) = $this->sprites[$sprite];
+			} else {
+				list($w, $h) = ImageHelper::getImageSize(craft()->config->get('iconSetsPath', 'svgicons') . $icon);
+			}
 		}
 
 		return array(
@@ -114,11 +133,70 @@ class SvgIconsService extends BaseApplicationComponent
 	}
 
 	/**
+	 * Generate sprite sheet resources
+	 * @param  string $stylesheet
+	 */
+	public function getSprites($stylesheet)
+	{
+		$filename = IOHelper::getFileName($stylesheet, false);
+
+		$oCssParser = new \Sabberworm\CSS\Parser(IOHelper::getFileContents($stylesheet));
+		$oCss = $oCssParser->parse();
+
+		$classes = array();
+
+		// Namespace css class
+		// Store width / height
+		foreach($oCss->getAllDeclarationBlocks() as $oBlock) {
+			$class = str_replace('.', '', $oBlock->getSelector()[0]->getSelector());
+			$oBlock->getSelector()[0]->setSelector(str_replace('.', '.svgicons-', $oBlock->getSelector()[0]->getSelector()));
+			$classes[$class] = array();
+			foreach ($oBlock->getRules() as $rule) {
+				if ($rule->getRule() == 'width') {
+					$classes[$class]['width'] = $rule->getValue()->getSize();
+				}
+
+				if ($rule->getRule() == 'height') {
+					$classes[$class]['height'] = $rule->getValue()->getSize();
+				}
+			}
+		}
+
+		// Remove redundant rules
+		foreach($oCss->getAllRuleSets() as $oRuleSet) {
+			$oRuleSet->removeRule('width');
+			$oRuleSet->removeRule('height');
+		}
+
+		IOHelper::writeToFile(craft()->path->getPluginsPath().'svgicons/resources/sprites/' . $filename . '.css', $oCss->render());
+		IOHelper::writeToFile(craft()->path->getPluginsPath().'svgicons/resources/sprites/' . $filename . '.json', JsonHelper::encode($classes));
+	}
+
+	/**
 	 * Return icon set select options
 	 * @param  string $folder
 	 * @return array
 	 */
-	private function _getIcons($folder) {
+	private function _getOptions($folder) {
+		if (IOHelper::getFolderContents($folder, false, '\.svg.css')) {
+			$sheet = IOHelper::getFolderContents(craft()->path->getPluginsPath() . 'svgicons/resources/sprites', false, '\.json$')[0];
+			$icons[] = array('optgroup' => str_replace('.svg', '', IOHelper::getFileName($sheet, false)));
+			$icons = array_merge($icons, $this->_getOptionsFromJson($sheet));
+		} else {
+			$icons[] = array('optgroup' => IOHelper::getFolderName($folder, false));
+			$icons = array_merge($icons, $this->_getOptionsFromFile($folder));
+		}
+
+		return $icons;
+	}
+
+	/**
+	 * Return icon set select options
+	 * from svg file name
+	 * @param  string $folder
+	 * @return array
+	 */
+	private function _getOptionsFromFile($folder) {
 		$d = IOHelper::getFolderContents($folder, false);
 
 		$icons = array();
@@ -127,6 +205,27 @@ class SvgIconsService extends BaseApplicationComponent
 			foreach ($d as $i)
 			{
 				$icons[] = array('value' => IOHelper::getFolderName($folder, false) . DIRECTORY_SEPARATOR . IOHelper::getFileName($i), 'label' => IOHelper::getFileName($i, false));
+			}
+		}
+
+		return $icons;
+	}
+
+	/**
+	 * Return icon set select options
+	 * from json
+	 * @param  string $jsonFile
+	 * @return array
+	 */
+	private function _getOptionsFromJson($jsonFile) {
+		$d = JsonHelper::decode(IOHelper::getFileContents($jsonFile));
+
+		$icons = array();
+
+		if (is_array($d)) {
+			foreach ($d as $k => $v)
+			{
+				$icons[] = array('value' => 'svgicons-' . $k, 'label' => $k);
 			}
 		}
 

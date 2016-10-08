@@ -26,6 +26,7 @@ class SvgIconsModel extends BaseModel
 	{
 		return array_merge(parent::defineAttributes(), array(
 			'icon' => array(AttributeType::String, 'default' => ''),
+			'sprite' => array(AttributeType::String, 'default' => ''),
 			'width' => array(AttributeType::Number, 'default' => ''),
 			'height' => array(AttributeType::Number, 'default' => ''),
 		));
