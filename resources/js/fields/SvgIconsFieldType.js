@@ -80,8 +80,8 @@
 
 			for (var i = 0; i < this.options.spriteSheets.length; i++) {
 				var sheet = this.options.spriteSheets[i];
-				if ($.inArray(sheet, $.$.svgicons.loaded) == -1) {
-					$.$.svgicons.loaded.push(sheet)
+				if ($.inArray(sheet, __svgicons.loaded) == -1) {
+					__svgicons.loaded.push(sheet)
 					$.get(sheet, function(data) {
 						var div = document.createElement('div')
 						div.innerHTML = new XMLSerializer().serializeToString(data.documentElement)

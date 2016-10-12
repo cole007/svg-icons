@@ -42,6 +42,8 @@ class SvgIconsService extends BaseApplicationComponent
 	 */
 	public function getIcons($iconSets) {
 
+		if(!$iconSets) return;
+
 		$icons = array();
 
 		if ($iconSets == '*') {
