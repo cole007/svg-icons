@@ -60,28 +60,14 @@ class SvgIconsFieldType extends BaseFieldType
 		$iconSets = array();
 		$errors = array();
 
-		if (IOHelper::folderExists($iconSetsPath))
-		{
+		if (IOHelper::folderExists($iconSetsPath)) {
 			$folders = IOHelper::getFolderContents($iconSetsPath, false);
 
-			if (is_array($folders))
-			{
+			if (is_array($folders)) {
 				foreach ($folders as $idx => $f)
 				{
 					$iconSets[IOHelper::getFolderName($f) . IOHelper::getFolderName($f, false)] = IOHelper::getFolderName($f, false);
-
-					// Create sprite sheet resources
-					foreach (IOHelper::getFolderContents($f, false, '\.svg.css') as $stylesheet) {
-						craft()->templates->includeCss(IOHelper::getFileContents($stylesheet));
-						craft()->svgIcons->getSprites($stylesheet);
-					}
 				}
-			}
-			if (empty($iconSets)) {
-				$errors = array_merge(
-					array('<p class="warning"><strong>You don’t have any SVG Icons.</strong></p><p>Please ensure you have placed your SVG icon collections within <code>' . $iconSetsPath . '</code></p>'),
-					$errors
-				);
 			}
 		} else {
 			$errors = array_merge(
@@ -113,8 +99,7 @@ class SvgIconsFieldType extends BaseFieldType
 	 */
 	public function getInputHtml($name, $value)
 	{
-		if (!$value)
-			$value = new SvgIconsModel();
+		if(!$value) $value = new SvgIconsModel();
 
 		$settings = $this->getSettings();
 
@@ -124,8 +109,22 @@ class SvgIconsFieldType extends BaseFieldType
 		craft()->templates->includeCssResource('svgicons/css/fields/SvgIconsFieldType.css');
 		craft()->templates->includeJsResource('svgicons/js/fields/SvgIconsFieldType.js');
 
-		foreach (IOHelper::getFolderContents(craft()->path->getPluginsPath() . 'svgicons/resources/sprites', false, '\.svg.css$') as $sheet) {
-			craft()->templates->includeCssResource('svgicons/sprites/' . IOHelper::getFilename($sheet));
+		$stylesheets = IOHelper::getFolderContents(craft()->path->getPluginsPath() . 'svgicons/resources/sprites', false, '\-sprites.css$');
+
+		if(!empty($stylesheets)) {
+			foreach ($stylesheets as $sheet) {
+				craft()->templates->includeCssResource('svgicons/sprites/' . IOHelper::getFilename($sheet));
+			}
+		}
+
+		$svgs = IOHelper::getFolderContents(craft()->path->getPluginsPath() . 'svgicons/resources/sprites', false, '\-sprites.svg$');
+
+		$spriteSheets = array();
+
+		if(!empty($svgs)) {
+			foreach ($svgs as $sheet) {
+				$spriteSheets[] = UrlHelper::getResourceUrl('svgicons/sprites/' . IOHelper::getFilename($sheet));
+			}
 		}
 
 		$jsonVars = array(
@@ -136,6 +135,7 @@ class SvgIconsFieldType extends BaseFieldType
 			'prefix' => craft()->templates->namespaceInputId(''),
 			'blank' => UrlHelper::getResourceUrl('svgicons/icon-blank.svg'),
 			'iconSetUrl' => craft()->config->get('iconSetsUrl', 'svgicons'),
+			'spriteSheets' => $spriteSheets,
 		);
 
 		$jsonVars = json_encode($jsonVars);
@@ -163,9 +163,13 @@ class SvgIconsFieldType extends BaseFieldType
 	{
 		if ($value['icon'] == '_blank_') $value = null;
 
-		if (substr($value['icon'], 0, strlen('svgicons-')) === 'svgicons-') {
-			$value['sprite'] = str_replace('svgicons-', '', $value['icon']);
+		preg_match('#(.*)' . preg_quote(DIRECTORY_SEPARATOR) . '(svgicons-)(.{3})-(.*)#', $value['icon'], $matches, PREG_OFFSET_CAPTURE);
+
+		if (!empty($matches)) {
+			$value['sprite'] = $matches[4][0];
+			$value['type'] = $matches[3][0];
 			$value['icon'] = null;
+			$value['resource'] = $matches[1][0];
 		}
 
 		return $value;
@@ -182,13 +186,11 @@ class SvgIconsFieldType extends BaseFieldType
 	{
 		if(!$value) return null;
 
-		$value = new SvgIconsModel($value);
-
-		if ($value->sprite) {
-			$value->icon = 'svgicons-' . $value->sprite;
+		if(isset($value['sprite']) && !empty($value['sprite'])) {
+			$value = craft()->svgIcons->getModel($value['resource'] . DIRECTORY_SEPARATOR . $value['sprite']);
+		} else {
+			$value = craft()->svgIcons->getModel($value['icon']);
 		}
-
-		list($value['width'], $value['height']) = craft()->svgIcons->getDimensions($value['icon']);
 
 		return $value;
 	}

@@ -15,14 +15,21 @@
 
 namespace Craft;
 
+use SvgIcons\Utilities\FyreStringHelper as FSH;
+
 class SvgIconsService extends BaseApplicationComponent
 {
 	private $sprites = array();
 
 	public function init()
 	{
-		foreach (IOHelper::getFolderContents(craft()->path->getPluginsPath() . 'svgicons/resources/sprites', false, '\.json$') as $json) {
-			$this->sprites = array_merge(JsonHelper::decode(IOHelper::getFileContents($json)), $this->sprites);
+		$this->createResources();
+
+		if (IOHelper::getFolder(craft()->path->getPluginsPath() . 'svgicons/resources/sprites')) {
+			foreach (IOHelper::getFolderContents(craft()->path->getPluginsPath() . 'svgicons/resources/sprites', false, '\.json$') as $json) {
+				$d = JsonHelper::decode(IOHelper::getFileContents($json));
+				$this->sprites[$d['resource']] = $d;
+			}
 		}
 
 		parent::init();
@@ -57,12 +64,27 @@ class SvgIconsService extends BaseApplicationComponent
 	 */
 	public function getModel($icon)
 	{
-		if (!IoHelper::fileExists(craft()->config->get('iconSetsPath', 'svgicons') . $icon)) return false;
+		if($icon instanceof SvgIconsModel) return $icon;
 
 		$model = new SvgIconsModel($icon);
-
 		$model->icon = $icon;
-		list($model->width, $model->height) = $this->getDimensions($icon);
+
+		if (FSH::endsWith($icon, '.svg')) {
+			list($model->width, $model->height) = $this->getDimensions($model);
+		} else {
+			preg_match('#(.*)' . preg_quote(DIRECTORY_SEPARATOR) . '(?:(svgicons-)(.{3})-)?(.*)#', $icon, $matches, PREG_OFFSET_CAPTURE);
+
+
+			if (!empty($matches)) {
+				$resource = $matches[1][0];
+
+				$model->sprite = $matches[4][0];
+				$model->type = $this->sprites[$resource]['type'];
+				$model->resource = $resource;
+
+				list($model->width, $model->height) = $this->getDimensions($model);
+			}
+		}
 
 		return $model;
 	}
@@ -74,12 +96,21 @@ class SvgIconsService extends BaseApplicationComponent
 	 */
 	public function getDimensions($icon)
 	{
-		if (isset($this->sprites[$icon]) || substr($icon, 0, strlen('svgicons-')) === 'svgicons-') {
-			$icon = str_replace('svgicons-', '', $icon);
-			return array_values($this->sprites[$icon]);
+		if($icon instanceof SvgIconsModel) {
+			$model = $icon;
+		} else {
+			$model = $this->getModel($icon);
 		}
 
-		return IOHelper::getFile(craft()->config->get('iconSetsPath', 'svgicons') . $icon) ? ImageHelper::getImageSize(craft()->config->get('iconSetsPath', 'svgicons') . $icon) : array(0,0);
+		if ($model->resource) {
+			if(isset($this->sprites[$model->resource]['classes'])) {
+					return array_values($this->sprites[$model->resource]['classes'][$model->sprite]);
+				}
+		} else {
+			return IOHelper::getFile(craft()->config->get('iconSetsPath', 'svgicons') . $model->icon) ? ImageHelper::getImageSize(craft()->config->get('iconSetsPath', 'svgicons') . $model->icon) : array(0,0);
+		}
+
+		return array(0,0);
 	}
 
 	/**
@@ -90,19 +121,13 @@ class SvgIconsService extends BaseApplicationComponent
 	public function setDimensions($icon, $baseHeight)
 	{
 		if($icon instanceof SvgIconsModel) {
-			$w = $icon->width;
-			$h = $icon->height;
+			$model = $icon;
 		} else {
-			if (substr($icon, 0, strlen('svgicons-')) === 'svgicons-') {
-				$sprite = str_replace('svgicons-', '', $icon);
-				list($w, $h) = $this->sprites[$sprite];
-			} else {
-				list($w, $h) = ImageHelper::getImageSize(craft()->config->get('iconSetsPath', 'svgicons') . $icon);
-			}
+			$model = $this->getModel($icon);
 		}
 
 		return array(
-			'width' => ceil(($w / $h) * $baseHeight),
+			'width' => ceil(($model->width / $model->height) * $baseHeight),
 			'height' => $baseHeight
 		);
 	}
@@ -122,23 +147,28 @@ class SvgIconsService extends BaseApplicationComponent
 		return TemplateHelper::getRaw(@file_get_contents($path));
 	}
 
-	/**
-	 * Return icon file name
-	 * @param  string $icon
-	 * @return string
-	 */
-	public function getFilename($icon)
-	{
-		return IOHelper::getFileName(craft()->config->get('iconSetsUrl', 'svgicons') . $icon, false);
-	}
+	// /**
+	//  * Return icon file name
+	//  * @param  string $icon
+	//  * @return string
+	//  */
+	// public function getFilename($icon)
+	// {
+	// 	return IOHelper::getFileName(craft()->config->get('iconSetsUrl', 'svgicons') . $icon, false);
+	// }
 
 	/**
 	 * Generate sprite sheet resources
 	 * @param  string $stylesheet
 	 */
-	public function getSprites($stylesheet)
+	private function getSpritesFromStylesheet($stylesheet)
 	{
 		$filename = IOHelper::getFileName($stylesheet, false);
+		$lmd = IOHelper::getFile($stylesheet)->getLastTimeModified();
+
+		$d = JsonHelper::decode(IOHelper::getFileContents(craft()->path->getPluginsPath().'svgicons/resources/sprites/' . $filename . '.json'));
+
+		if($lmd->getTimestamp() == $d['lastModified']) return;
 
 		$oCssParser = new \Sabberworm\CSS\Parser(IOHelper::getFileContents($stylesheet));
 		$oCss = $oCssParser->parse();
@@ -149,7 +179,7 @@ class SvgIconsService extends BaseApplicationComponent
 		// Store width / height
 		foreach($oCss->getAllDeclarationBlocks() as $oBlock) {
 			$class = str_replace('.', '', $oBlock->getSelector()[0]->getSelector());
-			$oBlock->getSelector()[0]->setSelector(str_replace('.', '.svgicons-', $oBlock->getSelector()[0]->getSelector()));
+			$oBlock->getSelector()[0]->setSelector(str_replace('.', '.svgicons-css-', $oBlock->getSelector()[0]->getSelector()));
 			$classes[$class] = array();
 			foreach ($oBlock->getRules() as $rule) {
 				if ($rule->getRule() == 'width') {
@@ -168,8 +198,88 @@ class SvgIconsService extends BaseApplicationComponent
 			$oRuleSet->removeRule('height');
 		}
 
+		$data = array(
+			'resource' => $filename,
+			'lastModified' => $lmd->getTimestamp(),
+			'type' => 'css',
+			'classes' => $classes,
+		);
+
 		IOHelper::writeToFile(craft()->path->getPluginsPath().'svgicons/resources/sprites/' . $filename . '.css', $oCss->render());
-		IOHelper::writeToFile(craft()->path->getPluginsPath().'svgicons/resources/sprites/' . $filename . '.json', JsonHelper::encode($classes));
+		IOHelper::writeToFile(craft()->path->getPluginsPath().'svgicons/resources/sprites/' . $filename . '.json', JsonHelper::encode($data));
+	}
+
+	private function getSpritesFromSvg($svg)
+	{
+		$filename = IOHelper::getFileName($svg);
+		$lmd = IOHelper::getFile($svg)->getLastTimeModified();
+
+		$d = JsonHelper::decode(IOHelper::getFileContents(craft()->path->getPluginsPath().'svgicons/resources/sprites/' . str_replace('.svg', '.json', $filename)));
+
+		if($lmd->getTimestamp() == $d['lastModified']) return;
+
+		$classes = array();
+
+		$xml = simplexml_load_file($svg);
+		$xml->registerXPathNamespace('svg', 'http://www.w3.org/2000/svg');
+		$nodes = $xml->children();
+		$type = 'sym';
+		if($nodes[0]->getName() == 'defs') {
+			$type = 'def';
+			$nodes = $nodes[0]->children();
+		}
+
+		foreach ($nodes as $node) {
+			if ($node->getName() == 'svg' || $node->getName() == 'symbol') {
+				$class = '' . $node->attributes()->id;
+				$classes[$class] = array();
+
+				$viewBox = explode(' ', $node['viewBox']);
+				$classes[$class]['width'] = 0 + $viewBox[2];
+				$classes[$class]['height'] = 0 + $viewBox[3];
+			}
+		}
+
+		$data = array(
+			'resource' => str_replace('.svg', '', $filename),
+			'lastModified' => $lmd->getTimestamp(),
+			'type' => $type,
+			'classes' => $classes,
+		);
+
+		IOHelper::copyFile($svg, craft()->path->getPluginsPath().'svgicons/resources/sprites/' . $filename);
+		IOHelper::writeToFile(craft()->path->getPluginsPath().'svgicons/resources/sprites/' . str_replace('.svg', '.json', $filename), JsonHelper::encode($data));
+	}
+
+	private function createResources()
+	{
+		$folders = IOHelper::getFolderContents(craft()->config->get('iconSetsPath', 'svgicons'), false);
+
+		if (is_array($folders)) {
+			foreach ($folders as $idx => $f)
+			{
+				$iconSets[IOHelper::getFolderName($f) . IOHelper::getFolderName($f, false)] = IOHelper::getFolderName($f, false);
+
+				// Create sprite sheet resources from Stylesheet
+				$stylesheets = IOHelper::getFolderContents($f, false, '\-sprites.css');
+
+				if(!empty($stylesheets)) {
+					foreach ($stylesheets as $stylesheetIdx => $stylesheet) {
+						craft()->templates->includeCss(IOHelper::getFileContents($stylesheet));
+						$this->getSpritesFromStylesheet($stylesheet);
+					}
+				}
+
+				// Create sprite sheet resources from SVG
+				$svgs = IOHelper::getFolderContents($f, false, '\-sprites.svg');
+
+				if(!empty($svgs)) {
+					foreach ($svgs as $svgIdx => $svg) {
+						$this->getSpritesFromSvg($svg);
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -178,10 +288,13 @@ class SvgIconsService extends BaseApplicationComponent
 	 * @return array
 	 */
 	private function _getOptions($folder) {
-		if (IOHelper::getFolderContents($folder, false, '\.svg.css')) {
-			$sheet = IOHelper::getFolderContents(craft()->path->getPluginsPath() . 'svgicons/resources/sprites', false, '\.json$')[0];
-			$icons[] = array('optgroup' => str_replace('.svg', '', IOHelper::getFileName($sheet, false)));
-			$icons = array_merge($icons, $this->_getOptionsFromJson($sheet));
+		if ($spriteSheets = IOHelper::getFolderContents($folder, false, '\-sprites.')) {
+			foreach ($spriteSheets as $sheet) {
+				$filename = IOHelper::getFilename($sheet, false);
+				$sheet = craft()->path->getPluginsPath() . 'svgicons/resources/sprites/' . $filename . '.json';
+				$icons[] = array('optgroup' => str_replace('-sprites', '', IOHelper::getFileName($sheet, false)));
+				$icons = array_merge($icons, $this->_getOptionsFromJson($sheet));
+			}
 		} else {
 			$icons[] = array('optgroup' => IOHelper::getFolderName($folder, false));
 			$icons = array_merge($icons, $this->_getOptionsFromFile($folder));
@@ -220,12 +333,15 @@ class SvgIconsService extends BaseApplicationComponent
 	private function _getOptionsFromJson($jsonFile) {
 		$d = JsonHelper::decode(IOHelper::getFileContents($jsonFile));
 
-		$icons = array();
+		$filename = IOHelper::getFilename($jsonFile, false);
 
-		if (is_array($d)) {
-			foreach ($d as $k => $v)
+		$icons = array();
+		$classes = $d['classes'];
+
+		if (is_array($classes)) {
+			foreach ($classes as $k => $v)
 			{
-				$icons[] = array('value' => 'svgicons-' . $k, 'label' => $k);
+				$icons[] = array('value' => $filename . DIRECTORY_SEPARATOR . 'svgicons-' . $d['type'] . '-' . $k, 'label' => $k);
 			}
 		}
 

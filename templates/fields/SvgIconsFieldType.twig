@@ -18,7 +18,7 @@
 
 
 {%- set options = (options is defined ? options : []) %}
-{%- set value = (values is defined ? values.icon : null) %}
+{%- set value = (values is defined ? values['sprite'] is defined ? values.resource ~ '/svgicons-' ~ values.type ~ '-' ~ values.sprite : values.icon : null) %}
 {%- set hasOptgroups = false -%}
 
 <div class="svgicons">

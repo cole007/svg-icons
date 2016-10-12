@@ -5,5 +5,10 @@
 	"type": "craft-plugin",
 	"require": {
 		"sabberworm/php-css-parser": "*"
+	},
+	"autoload": {
+		"psr-4": {
+			"SvgIcons\\Utilities\\": "utilities/"
+		}
 	}
 }

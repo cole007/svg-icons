@@ -27,6 +27,8 @@ class SvgIconsModel extends BaseModel
 		return array_merge(parent::defineAttributes(), array(
 			'icon' => array(AttributeType::String, 'default' => ''),
 			'sprite' => array(AttributeType::String, 'default' => ''),
+			'type' => array(AttributeType::String, 'default' => ''),
+			'resource' => array(AttributeType::String, 'default' => ''),
 			'width' => array(AttributeType::Number, 'default' => ''),
 			'height' => array(AttributeType::Number, 'default' => ''),
 		));
@@ -37,7 +39,7 @@ class SvgIconsModel extends BaseModel
 	 */
 	public function __toString()
 	{
-		return $this->getUrl();
+		return isset($this->sprite) ? $this->sprite : $this->getUrl();
 	}
 
 	/**
@@ -68,12 +70,12 @@ class SvgIconsModel extends BaseModel
 	}
 
 	/**
-	 * Return icon filename
+	 * Return icon sprite id
 	 * @return string
 	 */
-	public function getFilename()
+	public function getSprite()
 	{
-		return craft()->svgIcons->getFilename($this->icon);
+		return isset($this->sprite) ? $this->sprite : null;
 	}
 
 	/**

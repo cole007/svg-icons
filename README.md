@@ -1,6 +1,6 @@
 # SVG Icons plugin for Craft CMS
 
-Easily access urls or inline SVG icons from a public directory.
+SVG Icons offers a custom field type allowing users to choose icons from individual files or sprite sheets within Craft CMS.
 
 ![Screenshot](resources/screenshots/plugin_logo.png)
 
@@ -21,15 +21,15 @@ The SVG Icons plugin introduces a custom fieldtype allowing you to quickly and e
 
 ![Screenshot](resources/screenshots/svg-icon-fieldtype.png)
 
-To get started, simply create a directory called `svgicons` in your `public` directory and place a subdirectory containing your SVG icons within. You can add as many icon sets as you like.
+To get started, simply create a directory called `svgicons` (This is configurable) in your `public` directory and place a subdirectory containing your SVG icons within. You can add as many icon sets as you like.
+
+---
+
+**To use SVG sprite sheets the sprite sheet must end with `-sprites` with either a `css` or `svg` extension.**
+
+---
 
 Create a field using the `SVG Icons` field type and choose which icon set you would like to use.
-
----
-
-**ENSURE SVG DOES NOT CONTAIN WIDTH & HEIGHT ATTRIBUTES IF YOU WOULD LIKE TO SCALE ICON WITH CSS**
-
----
 
 ## Configuring SVG Icons
 
@@ -57,7 +57,11 @@ Public attributes and methods of the `SvgIconsModel` model.
 
 **`icon` [string]**
 
-The icon set path including icon file name
+The icon path
+
+**`sprite` [string]**
+
+The icon id within the sprite sheet
 
 **`width` [number]**
 
@@ -73,32 +77,33 @@ The icon original height
 
 **`{{ svgIcon }}` [string]**
 
-Returns icon public url
+Returns icon path or icon id within sprite sheet
 
 
 ##### getInline
 
 **`{{ svgIcon.inline }}` [string]**
 
-Returns inlines icon
+Returns raw SVG for inlining. Only applicable when using individual SVG files and not sprite sheets.
+If no SVG file found returns empty string.
 
-Example `{{ svgIcon }}`
+Example `{{ svgIcon.inline }}`
 
 ##### getUrl
 
 **`{{ svgIcon.url }}` [string]**
 
-Returns icon public URL
+Returns icon path
 
 Example `{{ svgIcon.url }}`
 
-##### getFilename
+##### getSprite
 
-**`{{ svgIcon.filename }}` [string]**
+**`{{ svgIcon.sprite }}` [string]**
 
-Returns icon filename without extension
+Returns icon id within sprite sheet
 
-Example `{{ svgIcon.filename }}`
+Example `{{ svgIcon.sprite }}`
 
 ##### getDimensions
 
@@ -118,29 +123,14 @@ Example `{{ svgIcon.setDimensions(24) }}`
 
 ### Template Variables
 
-#### Get SVG Icon Model From String
-
-**`{{ craft.svgIcons.getModel(path) }}` [model]**
-
-Returns icon data as array
-
-Example `{{ craft.svgIcons.getModel('fontawesome/align-left.svg') }}`
-
 #### Inline SVG Icon
 
 **`{{ craft.svgIcons.inline(path) }}` [string]**
 
-Returns icon public URL
+Returns raw SVG for inlining. Only applicable when using individual SVG files and not sprite sheets.
+If no SVG file found returns empty string.
 
 Example `{{ craft.svgIcons.inline('fontawesome/align-left.svg') }}`
-
-#### Get SVG Icon Filename
-
-**`{{ craft.svgIcons.getFilename(path) }}` [string]**
-
-Returns icon filename without extension
-
-Example `{{ craft.svgIcons.getFilename('fontawesome/align-left.svg') }}`
 
 #### Get SVG Icon Dimensions
 
@@ -175,7 +165,7 @@ I'm open to feed back and suggestions as I'm sure there is plenty of room for im
 
 ### 0.0.3 --
 
-* **[Added]** `getFilename` service, model and variable methods
+* **[Added]** Initial support for SVG sprite sheets. CSS and SVG based.
 
 ### 0.0.2 -- 2016.10.05
 
