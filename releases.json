@@ -5,7 +5,7 @@
         "date": "2016-10-12T11:10:00-11:00",
         "notes": [
             "[Fixed] JavaScript namespacing issue"
-            "[Fixed] PHP error when failing to add icon sets durring fieldsetup"
+            "[Fixed] PHP error when failing to add icon sets during field setup"
         ]
     },
     {

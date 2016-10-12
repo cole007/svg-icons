@@ -163,6 +163,11 @@ I'm open to feed back and suggestions as I'm sure there is plenty of room for im
 
 ## SVG Icons Changelog
 
+### 0.0.4 -- 2016.10.12
+
+* **[Added]** Initial support for SVG sprite sheets. CSS and SVG based.
+* **[Fixed]** PHP error when failing to add icon sets during field setup.
+
 ### 0.0.3 -- 2016.10.12
 
 * **[Added]** Initial support for SVG sprite sheets. CSS and SVG based.
