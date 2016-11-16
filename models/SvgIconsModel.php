@@ -25,12 +25,12 @@ class SvgIconsModel extends BaseModel
 	protected function defineAttributes()
 	{
 		return array_merge(parent::defineAttributes(), array(
-			'icon' => array(AttributeType::String, 'default' => ''),
-			'sprite' => array(AttributeType::String, 'default' => ''),
-			'type' => array(AttributeType::String, 'default' => ''),
-			'resource' => array(AttributeType::String, 'default' => ''),
-			'width' => array(AttributeType::Number, 'default' => ''),
-			'height' => array(AttributeType::Number, 'default' => ''),
+			'icon' => array(AttributeType::String, 'default' => null),
+			'sprite' => array(AttributeType::String, 'default' => null),
+			'type' => array(AttributeType::String, 'default' => null),
+			'resource' => array(AttributeType::String, 'default' => null),
+			'width' => array(AttributeType::Number, 'default' => null),
+			'height' => array(AttributeType::Number, 'default' => null),
 		));
 	}
 

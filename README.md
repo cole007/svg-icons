@@ -163,6 +163,10 @@ I'm open to feed back and suggestions as I'm sure there is plenty of room for im
 
 ## SVG Icons Changelog
 
+### 0.0.5 -- 2016.11.16
+
+* **[Fixed]** Fixed bug when using single SVG icon files would not display icon in CP
+
 ### 0.0.4 -- 2016.10.12
 
 * **[Fixed]** JavaScript namespacing issue
