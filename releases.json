@@ -1,5 +1,13 @@
 [
     {
+        "version": "0.0.6",
+        "downloadUrl": "https://github.com/fyrebase/svg-icons/archive/master.zip",
+        "date": "2016-11-16T11:10:00-11:00",
+        "notes": [
+            "[Fixed] Updated plugin version - rookie error"
+        ]
+    },
+    {
         "version": "0.0.5",
         "downloadUrl": "https://github.com/fyrebase/svg-icons/archive/master.zip",
         "date": "2016-11-16T11:10:00-11:00",
