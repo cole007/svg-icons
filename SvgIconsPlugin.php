@@ -66,7 +66,7 @@ class SvgIconsPlugin extends BasePlugin
 	 */
 	public function getVersion()
 	{
-		return '0.0.4';
+		return '0.0.5';
 	}
 
 	/**
