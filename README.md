@@ -117,13 +117,25 @@ Example `{{ svgIcon.dimensions }}`
 
 **`{{ svgIcon.setDimensions(newHeight) }}` [array]**
 
-Returns icon new dimensions in pixels as array maintaining aspect ratio
+Returns icon new dimensions in pixels as array maintaining aspect ratio using newHeight as height.
 
 Example `{{ svgIcon.setDimensions(24) }}`
 
 ### Template Variables
 
 #### Inline SVG Icon
+
+**`{{ craft.svgIcons.createTag(path, size) }}` [string]**
+
+If size is true viewBox dimensions are used.
+If size is an int, viewBox dimensions will be calculated, maintaining aspect ratio, using size as height.
+
+Returns HTML SVG/IMG tag.
+If no SVG file/sprite found returns empty string.
+
+File Example `{{ craft.svgIcons.createTag('fontawesome/align-left.svg', 24) }}`
+
+Sprite Example `{{ craft.svgIcons.createTag('mysprite-sprites/awesome-icon', true) }}`
 
 **`{{ craft.svgIcons.inline(path) }}` [string]**
 
@@ -162,6 +174,12 @@ If you stumble across any bugs let me know, or better yet submit a pull request!
 I'm open to feed back and suggestions as I'm sure there is plenty of room for improvement.
 
 ## SVG Icons Changelog
+
+### 1.0.0 -- 2016.11.18
+
+* **[Added]** HTML helper `createTag` for generating svg/img tag"
+* **[Fixed]** Fixed bug when using defs inside sprite sheets not displaying correctly in CP"
+* **[Improved]** Updated README.md"
 
 ### 0.0.6 -- 2016.11.17
 

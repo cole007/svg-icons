@@ -149,6 +149,36 @@ class SvgIconsService extends BaseApplicationComponent
 		return TemplateHelper::getRaw(@file_get_contents($path));
 	}
 
+	/**
+	 * Create HTML tag for icon
+	 * @param  string/model $icon
+	 * @return string
+	 */
+	public function createTag($icon, $setSize = false)
+	{
+		if($icon instanceof SvgIconsModel) {
+			$model = $icon;
+		} else {
+			$model = $this->getModel($icon);
+		}
+
+		if (is_bool($setSize)) {
+			$size = array('width' => $model->width, 'height' => $model->height);
+		} else {
+			$size = $this->setDimensions($model, $setSize);
+		}
+
+		if($model->type) {
+			return TemplateHelper::getRaw('<svg' . ($setSize ? ' style="width: ' . $size['width'] . '; height: ' . $size['height'] . ';"' : '') . ' viewBox="0 0 ' . $model->width . ' ' . $model->height . '"><use xlink:href="#' . $model->sprite . '" /></svg>');
+		}
+
+		if ($model->icon) {
+			return TemplateHelper::getRaw('<img src="' . craft()->config->get('iconSetsUrl', 'svgicons') . $model->icon . '">');
+		}
+
+		return '';
+	}
+
 	// /**
 	//  * Return icon file name
 	//  * @param  string $icon

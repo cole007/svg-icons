@@ -32,6 +32,11 @@ class SvgIconsVariable
 		return craft()->svgIcons->inline($icon);
 	}
 
+	public function createTag($icon, $setSize = false)
+	{
+		return craft()->svgIcons->createTag($icon, $setSize);
+	}
+
 	public function getModel($icon)
 	{
 		return craft()->svgIcons->getModel($icon);

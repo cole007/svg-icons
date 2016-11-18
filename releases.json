@@ -1,8 +1,18 @@
 [
     {
+        "version": "1.0.0",
+        "downloadUrl": "https://github.com/fyrebase/svg-icons/archive/master.zip",
+        "date": "2016-11-18T11:10:00-11:00",
+        "notes": [
+            "[Added] HTML helper `createTag` for generating svg/img tag"
+            "[Fixed] Fixed bug when using defs inside sprite sheets not displaying correctly in CP"
+            "[Improved] Updated README.md"
+        ]
+    },
+    {
         "version": "0.0.6",
         "downloadUrl": "https://github.com/fyrebase/svg-icons/archive/master.zip",
-        "date": "2016-11-16T11:10:00-11:00",
+        "date": "2016-11-17T11:10:00-11:00",
         "notes": [
             "[Fixed] Updated plugin version - rookie error"
         ]

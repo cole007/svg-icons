@@ -25,7 +25,7 @@ class SvgIconsPlugin extends BasePlugin
 		require_once __DIR__ . '/vendor/autoload.php';
 
 		if (craft()->request->isCpRequest()) {
-			craft()->templates->includeJs('__svgicons = { loaded: [] }', true);
+			craft()->templates->includeJs('__svgicons = { loaded: [], loading: [] }', true);
 		}
 	}
 
@@ -66,7 +66,7 @@ class SvgIconsPlugin extends BasePlugin
 	 */
 	public function getVersion()
 	{
-		return '0.0.6';
+		return '1.0.0';
 	}
 
 	/**
