@@ -169,7 +169,7 @@ class SvgIconsService extends BaseApplicationComponent
 		}
 
 		if($model->type) {
-			return TemplateHelper::getRaw('<svg' . ($setSize ? ' style="width: ' . $size['width'] . '; height: ' . $size['height'] . ';"' : '') . ' viewBox="0 0 ' . $model->width . ' ' . $model->height . '"><use xlink:href="#' . $model->sprite . '" /></svg>');
+			return TemplateHelper::getRaw('<svg' . ($setSize ? ' style="width: ' . $size['width'] . 'px; height: ' . $size['height'] . 'px;"' : '') . ' viewBox="0 0 ' . $model->width . ' ' . $model->height . '"><use xlink:href="#' . $model->sprite . '" /></svg>');
 		}
 
 		if ($model->icon) {
