@@ -57,6 +57,7 @@ class SvgIconsFieldType extends BaseFieldType
 	public function getSettingsHtml()
 	{
 		$iconSetsPath = craft()->config->get('iconSetsPath', 'svgicons');
+		$iconSetsPath = str_replace('{document_root}', $_SERVER['DOCUMENT_ROOT'], $iconSetsPath);
 		$iconSets = array();
 		$errors = array();
 
@@ -78,6 +79,17 @@ class SvgIconsFieldType extends BaseFieldType
 
 		craft()->templates->includeCssResource('svgicons/css/fields/SvgIconsFieldType_Settings.css');
 
+		$tmpSettings = $this->getSettings()->iconSets;
+
+		if(is_array($tmpSettings)){
+			foreach($tmpSettings AS $k => $v) {
+				$tmpSettings[$k] = str_replace('{document_root}',$_SERVER['DOCUMENT_ROOT'],$v);
+				
+			}
+			$this->getSettings()->iconSets = $tmpSettings;
+
+		} 		
+		
 		return craft()->templates->render('svgicons/fields/SvgIconsFieldType_Settings', array(
 			'settings' => $this->getSettings(),
 			'iconSets' => $iconSets,
@@ -87,6 +99,12 @@ class SvgIconsFieldType extends BaseFieldType
 
 	public function prepSettings($settings)
 	{
+			
+			$iconSets = $settings['iconSets'];
+			foreach ($iconSets AS $key => $value) {
+				$iconSets[$key] = str_replace($_SERVER['DOCUMENT_ROOT'],'{document_root}',$value);
+			}
+			$settings['iconSets'] = $iconSets;
 			return $settings;
 	}
 
@@ -100,7 +118,7 @@ class SvgIconsFieldType extends BaseFieldType
 	public function getInputHtml($name, $value)
 	{
 		if(!$value) $value = new SvgIconsModel();
-
+		
 		$settings = $this->getSettings();
 
 		$id = craft()->templates->formatInputId($name);
@@ -141,13 +159,18 @@ class SvgIconsFieldType extends BaseFieldType
 		$jsonVars = json_encode($jsonVars);
 
 		craft()->templates->includeJs('var svgIconsFieldType = new SvgIconsFieldType(' . $jsonVars . ');');
+		
+		$iconSets = $settings->iconSets;
+		foreach($iconSets AS $k => $v) {
+			$iconSets[$k] = str_replace('{document_root}',$_SERVER['DOCUMENT_ROOT'],$v);
+		}
 
 		$variables = array(
 			'id' => $id,
 			'name' => $name,
 			'namespaceId' => $namespacedId,
 			'values'  => $value,
-			'options' => craft()->svgIcons->getIcons($settings->iconSets)
+			'options' => craft()->svgIcons->getIcons($iconSets)
 		);
 
 		return craft()->templates->render('svgicons/fields/SvgIconsFieldType.twig', $variables);
