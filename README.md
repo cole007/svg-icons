@@ -40,6 +40,8 @@ SVG Icons comes with its own `config.php` which you can over ride by simply crea
 ***Default `$_SERVER['DOCUMENT_ROOT'] . '/svgicons/'`***
 
 File system path to the folder where you want to store your icon sets.
+SvgIcons will save the absolute path to the field settings which may cause issues using the plugin between different environments. To resolve this you can use the dynamic variable `{document_root}` in your `iconSetsPath` config. 
+
 
 ### iconSetsUrl [string]
 
